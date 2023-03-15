@@ -2,20 +2,31 @@ import React from 'react';
 
 import Button from '../Button';
 
+import ToastShelf from '../ToastShelf';
+
+import { ToastContext } from '../ToastProvider';
+
 import styles from './ToastPlayground.module.css';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastPlayground() {
-  const [message, setMessage] = React.useState('');
-  const [variant, setVariant] = React.useState('');
-
+  const {
+    showToast,
+    message,
+    variant,
+    handleMessageChange,
+    handleVariantChange,
+    handleAddToast,
+  } = React.useContext(ToastContext);
   return (
     <div className={styles.wrapper}>
       <header>
         <img alt="Cute toast mascot" src="/toast.png" />
         <h1>Toast Playground</h1>
       </header>
+
+      {showToast && <ToastShelf />}
 
       <div className={styles.controlsWrapper}>
         <div className={styles.row}>
@@ -29,31 +40,35 @@ function ToastPlayground() {
           <div className={styles.inputWrapper}>
             <textarea
               id="message"
+              required={true}
+              value={message}
               className={styles.messageInput}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleMessageChange}
             />
           </div>
         </div>
-
         <div className={styles.row}>
           <div className={styles.label}>Variant</div>
           <div
             className={`${styles.inputWrapper} ${styles.radioWrapper}`}
           >
-            {VARIANT_OPTIONS.map((variantOption) => (
-              <label key={variantOption} htmlFor={`variant-${variantOption}`}>
-                <input
-                  id={`varient-${variantOption}`}
-                  type="radio"
-                  name="variant"
-                  value={variantOption}
-                  checked={variant === variantOption}
-                  onChange={(e) => setVariant(e.target.value)}
-                />
-                {variantOption}
-              </label>
-            ))}
-            {console.log(variant)}
+            {VARIANT_OPTIONS.map((variantOption) => {
+              const id = `variant-${variantOption}`;
+              return (
+                <label key={id} htmlFor={id}>
+                  <input
+                    id={id}
+                    required={true}
+                    type="radio"
+                    name="variant"
+                    value={variantOption}
+                    checked={variant === variantOption}
+                    onChange={handleVariantChange}
+                  />
+                  {variantOption}
+                </label>
+              );
+            })}
           </div>
         </div>
 
@@ -62,7 +77,7 @@ function ToastPlayground() {
           <div
             className={`${styles.inputWrapper} ${styles.radioWrapper}`}
           >
-            <Button>Pop Toast!</Button>
+            <Button onClick={handleAddToast}>Pop Toast!</Button>
           </div>
         </div>
       </div>

@@ -9,6 +9,8 @@ import {
 
 import VisuallyHidden from '../VisuallyHidden';
 
+import { useEscapeKey } from '../../hooks/escapeKey';
+
 import styles from './Toast.module.css';
 
 const ICONS_BY_VARIANT = {
@@ -18,16 +20,20 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 };
 
-function Toast() {
+function Toast({ variant, handleDismiss, children, id }) {
+  const IconComponent = ICONS_BY_VARIANT[variant];
+
+  useEscapeKey(() => handleDismiss(id));
+
   return (
-    <div className={`${styles.toast} ${styles.notice}`}>
+    <div className={`${styles[variant]} ${styles.toast}`}>
       <div className={styles.iconContainer}>
-        <Info size={24} />
+        <IconComponent size={24} />
       </div>
       <p className={styles.content}>
-        16 photos have been uploaded
+        {children}
       </p>
-      <button className={styles.closeButton}>
+      <button className={styles.closeButton} onClick={() => handleDismiss(id)}>
         <X size={24} />
         <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
